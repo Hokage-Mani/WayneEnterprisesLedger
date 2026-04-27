@@ -202,11 +202,19 @@ public class Main {
                                                     }
                                                 }
                                                 break;
-                                            case"5":
-                                                System.out.print("\nEnter vendor name to search: ");
+                                            case "5":
+                                                System.out.println("\n--- Available Vendors ---");
+                                                java.util.Set<String> uniqueVendors = new java.util.HashSet<>();
+                                                for(Transaction tx : transactionList){
+                                                    uniqueVendors.add(tx.getVendor());
+                                                }
+                                                for(String vendorName : uniqueVendors){
+                                                    System.out.println(vendorName);
+                                                }
+
+                                                System.out.print("\nEnter vendor name to search from the list above: ");
                                                 String searchVendor = scanner.nextLine();
                                                 System.out.println("\n[=== Results for: " + searchVendor + " ===]");
-
                                                 boolean foundMatch = false;
 
                                                 for (Transaction tx : transactionList) {
@@ -220,6 +228,7 @@ public class Main {
                                                 if (!foundMatch) {
                                                     System.out.println("No transactions found for that vendor.");
                                                 }
+
                                                 break;
                                             case"0":
                                                 System.out.println("\nReturning to Ledger Menu...");
@@ -242,7 +251,7 @@ public class Main {
                     break;
 
 
-                    //Was tje easiest option to start with and get done being that it's simply exiting the progrgam
+                    //Was tje easiest option to start with and get done being that it's simply exiting the program
 
                     case "X":
                     System.out.println("\nLogging out of Wayne Enterprises Ledger. Goodbye.");
@@ -271,20 +280,18 @@ public class Main {
         System.out.println("               *** AUTHORIZED PERSONNEL ONLY ***");
         System.out.println("=====================================================================\n");
     }
-    // --- HELPER METHOD FOR DATES ---
     private static LocalDate getValidDate(Scanner scanner) {
-        while (true) { // Loop forever until they get it right
+        while (true) {
             System.out.print("Enter date (YYYY-MM-DD) or press Enter for today: ");
             String dateInput = scanner.nextLine();
 
             if (dateInput.isEmpty()) {
-                return LocalDate.now(); // Instantly returns if they hit enter
+                return LocalDate.now();
             }
 
             try {
-                return LocalDate.parse(dateInput); // Tries to parse and return
-            } catch (Exception e) { // Catches DateTimeParseException
-                // If it fails, it prints this error and the loop starts over!
+                return LocalDate.parse(dateInput);
+            } catch (Exception e) {
                 System.out.println("ERROR: Invalid date format. Please exactly use YYYY-MM-DD.");
             }
         }
