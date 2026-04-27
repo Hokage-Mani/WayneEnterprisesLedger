@@ -35,62 +35,64 @@ public class Main {
             switch (input) {
                 case "D":
                     System.out.println("\n-- Deposit Menu --");
-                    System.out.println("Enter Date (YYYY-MM-DD) or press Enter for today");
-                    String dateInput = scanner.nextLine();
-                    LocalDate date;
-                    if(dateInput.isEmpty()){
-                        date = LocalDate.now();
-                    }else {
-                        date = LocalDate.parse(dateInput);
-                    }
+                    LocalDate date = getValidDate(scanner);
+
                     LocalTime time = LocalTime.now().withNano(0);
+
                     System.out.println("Enter vendor (Your Name or Client Bank)");
                     String vendor = scanner.nextLine();
 
                     System.out.println("Enter description of deposit");
                     String description = scanner.nextLine();
 
-                    System.out.println("Enter deposit amount: $");
-                    double amount = Double.parseDouble(scanner.nextLine());
+                    double amount = getValidAmount(scanner);
 
-                    if(amount <0){
-                        amount = amount *-1;
+                    if(amount < 0){
+                        amount = amount * -1;
                     }
+
                     boolean isDeposited = true;
                     Transaction newDeposit = new Transaction(date, time, description, vendor, amount, isDeposited);
 
-                  //Might cause an error at some point
-                     FileHandler.saveTransaction(newDeposit);
-
+                    FileHandler.saveTransaction(newDeposit);
                     transactionList.add(newDeposit);
 
                     System.out.println("\nSUCCESS: Deposit of $" + amount + " for " + description + " recorded.");
-
                     break;
 
                 case "P":
                     System.out.println("\n=== Enter Debit Information ===");
+
+                    LocalDate payDate = getValidDate(scanner);
+                    LocalTime payTime = LocalTime.now().withNano(0);
+
                     System.out.println("Enter Payee/Vendor name: ");
                     String payee = scanner.nextLine();
                     System.out.println("Enter Payment Description: ");
                     String payDescription = scanner.nextLine();
-                    System.out.println("Enter invoice/reference number or ENTER to skip");
+                    System.out.println("Enter invoice/reference number or ENTER to skip: ");
                     String invoice = scanner.nextLine();
-                    System.out.println("Enter payment amount: ");
-                    double paymentAmount = Double.parseDouble(scanner.nextLine());
-                    System.out.println("Enter payment method (Wire, ACH, Card: ");
+
+                    double paymentAmount = getValidAmount(scanner);
+
+                    if(paymentAmount > 0){
+                        paymentAmount = paymentAmount * -1;
+                    }
+                    System.out.println("Enter payment method (Wire, ACH, Card): ");
                     String paymentMethod = scanner.nextLine();
                     System.out.println("Confirm payment? (Y/N): ");
                     String confirmChoice = scanner.nextLine();
 
                     if(confirmChoice.equalsIgnoreCase("y")){
-                        System.out.println("\nSUCCESS: Payment of $" + paymentAmount + " From: " + payee + " By: " +
-                                invoice + paymentMethod + " For: " + payDescription);
+                        boolean isPaymentDeposited = false;
+                        Transaction newPayment = new Transaction(payDate, payTime, payDescription, payee, paymentAmount, isPaymentDeposited);
+
+                        FileHandler.saveTransaction(newPayment);
+                        transactionList.add(newPayment);
+
+                        System.out.printf("\nSUCCESS: Payment of $%.2f From: %s By: %s %s For: %s%n",
+                                Math.abs(paymentAmount), payee, invoice, paymentMethod, payDescription);
                     }
-
-
-
-
                     break;
 
                 case "L":
@@ -268,5 +270,36 @@ public class Main {
         System.out.println("=====================================================================");
         System.out.println("               *** AUTHORIZED PERSONNEL ONLY ***");
         System.out.println("=====================================================================\n");
+    }
+    // --- HELPER METHOD FOR DATES ---
+    private static LocalDate getValidDate(Scanner scanner) {
+        while (true) { // Loop forever until they get it right
+            System.out.print("Enter date (YYYY-MM-DD) or press Enter for today: ");
+            String dateInput = scanner.nextLine();
+
+            if (dateInput.isEmpty()) {
+                return LocalDate.now(); // Instantly returns if they hit enter
+            }
+
+            try {
+                return LocalDate.parse(dateInput); // Tries to parse and return
+            } catch (Exception e) { // Catches DateTimeParseException
+                // If it fails, it prints this error and the loop starts over!
+                System.out.println("ERROR: Invalid date format. Please exactly use YYYY-MM-DD.");
+            }
+        }
+    }
+
+    //Linda helped me think about if a user inputs a incorrect format for the date and amount for two of the options
+    //reminding me to add an TryCatch exception for those human errors.
+    private static double getValidAmount(Scanner scanner) {
+        while (true) {
+            System.out.print("Enter amount: $");
+            try {
+                return Double.parseDouble(scanner.nextLine());
+            } catch (Exception e) { // Catches NumberFormatException
+                System.out.println("ERROR: Invalid number. Please enter digits only (e.g., 50.00).");
+            }
+        }
     }
 }

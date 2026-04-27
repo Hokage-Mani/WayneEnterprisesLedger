@@ -21,6 +21,7 @@ public class Transaction {
         this.isDeposited = isDeposited;
     }
 
+    //Getter & Setters
     public LocalDate getDate() {
         return date;
     }
