@@ -1,9 +1,6 @@
 package org.example;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
@@ -43,4 +40,25 @@ public class FileHandler {
 
         return TransactionList;
     }
+    public static void saveTransaction(Transaction newTx) {
+
+
+        String lineToWrite = newTx.getDate() + "|" +
+                newTx.getTime() + "|" +
+                newTx.getDescription() + "|" +
+                newTx.getVendor() + "|" +
+                newTx.getAmount();
+
+        try (FileWriter fw = new FileWriter("src/main/resources/transactions.csv", true);
+             BufferedWriter bw = new BufferedWriter(fw);
+             PrintWriter out = new PrintWriter(bw)) {
+
+            out.println(lineToWrite);
+
+        } catch (IOException e) {
+            System.out.println("Error saving transaction to file.");
+        }
+    }
+
 }
+

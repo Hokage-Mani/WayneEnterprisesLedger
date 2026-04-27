@@ -13,4 +13,6 @@ public class TransactionManager {
                     e.getDate(), e.getTime(), e.getDescription(), e.getVendor(), e.getAmount());
         }
     }
+
 }
+
