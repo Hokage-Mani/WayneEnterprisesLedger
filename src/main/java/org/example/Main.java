@@ -114,7 +114,7 @@ public class Main {
                             case "A":
                                 System.out.println("\n[=== Showing All Entries ===]");
                                 for (Transaction tx : transactionList) {
-                                    // Use the exact same printf you used for the Deposits!
+                                    // Used the exact same printf  used for the Deposits!
                                     System.out.printf("Date: %s | Time: %s | Vendor: %s | Amount: $%,.2f%n",
                                             tx.getDate(), tx.getTime(), tx.getVendor(), tx.getAmount());
                                 }
